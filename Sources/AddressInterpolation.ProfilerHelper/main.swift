@@ -6,39 +6,38 @@
 //
 
 import Foundation
-import SwiftPostal
+import AddressInterpolation
 
-let printEveryIteration = 10000
+let printEveryIteration = 1
 
-func test(houseNumber: Int) -> TimeInterval {
-//    var expander = Expander()
-//    if houseNumber % 2 == 0 {
-//        expander.languages = [ "en" ]
-//    } else {
-//        expander.languages = [ "fr" ]
-//    }
-//    let date1 = Date()
-//    let expansions = expander.expand(address: "\(houseNumber) S Rural")
-//    // uncomment to see everything slow down by over 2000X:
-//    // SwiftPostal.cleanup()
-//
-//    let date2 = Date()
-//    if houseNumber % printEveryIteration == 0 || houseNumber % printEveryIteration == 1 {
-//        print("Expansions (\(expander.languages.joined(separator: ","))): \(expansions)")
-//    }
-//    return date2.timeIntervalSince(date1)
-    return 0
+let dir = "/Volumes/microSD/pelias/data/interpolation"
+let interpolator = try Interpolator(dataDirectory: URL(fileURLWithPath: dir))
+
+func test(houseNumber: Int) throws -> TimeInterval {
+    let street = "NE Killingsworth St"
+    let coordinate = LatLon(lat: 45.562752, lon: -122.608138)
+
+    let date1 = Date()
+    let result = try interpolator.interpolate(street: street, houseNumber: "\(houseNumber)", coordinate: coordinate)
+
+    let date2 = Date()
+    if houseNumber % printEveryIteration == 0 || houseNumber % printEveryIteration == 1 {
+        if let result = result {
+            print("Result: house: \(result.number) type: \(result.type.description) coord: \(result.coordinate.description)")
+        }
+    }
+    return date2.timeIntervalSince(date1)
 }
 
 func main() {
     var houseNumber = 1
     var time: TimeInterval = 0
     while true {
-        let timed = test(houseNumber: houseNumber)
+        let timed = try! test(houseNumber: houseNumber)
         time += timed
         let average = time / Double(houseNumber)
         if houseNumber % printEveryIteration == 0 || houseNumber % printEveryIteration == 1 {
-            print("Average: \(average * 1000)ms, samples: \(houseNumber)")
+//            print("Average: \(average * 1000)ms, samples: \(houseNumber)")
         }
         houseNumber += 1
     }

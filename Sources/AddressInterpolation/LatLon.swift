@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Commander
 
 public struct LatLon {
     public let lat: Double
@@ -17,9 +16,34 @@ public struct LatLon {
         self.lon = lon
     }
     
-    static let nan = LatLon(lat: .nan, lon: .nan)
+    public static let nan = LatLon(lat: .nan, lon: .nan)
     public var isNan: Bool { return lat.isNaN || lon.isNaN }
     public var description: String {
-        return "\(lat),\(lon)"
+        return String(format: "%.6f,%.6f", lat, lon)
     }
+}
+
+
+func deg2rad(_ deg: Double) -> Double {
+    return deg * .pi / 180
+}
+
+func rad2deg(_ rad: Double) -> Double {
+    return rad * 180.0 / .pi
+}
+
+func distance(_ a: LatLon, _ b: LatLon) -> Double {
+    return rad2deg( acos( sin( deg2rad(a.lat) ) * sin( deg2rad(b.lat) ) +
+        cos( deg2rad(a.lat) ) * cos( deg2rad(b.lat) ) * cos( deg2rad(a.lon) - deg2rad(b.lon) )) )
+}
+func interpolate(distance d: Double, ratio f: Double, a: LatLon, b: LatLon) -> LatLon {
+    let A = sin( (1-f) * d ) / sin( d )
+    let B = sin( f * d ) / sin( d )
+    let X = A * cos( deg2rad(a.lat) ) * cos( deg2rad(a.lon) ) + B * cos( deg2rad(b.lat) ) * cos( deg2rad(b.lon) )
+    let Y = A * cos( deg2rad(a.lat) ) * sin( deg2rad(a.lon) ) + B * cos( deg2rad(b.lat) ) * sin( deg2rad(b.lon) )
+    let Z = A * sin( deg2rad(a.lat) ) + B * sin( deg2rad(b.lat) )
+    return LatLon(
+        lat: rad2deg( atan2( Z, sqrt( pow( X, 2 ) + pow( Y, 2 ) ) ) ),
+        lon: rad2deg( atan2( Y, X ) )
+    )
 }

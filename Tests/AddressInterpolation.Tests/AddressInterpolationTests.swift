@@ -16,7 +16,7 @@ func XCTAssert<T, SeqT>(sequence: SeqT, doesNotContain element: T, file: StaticS
 
 class AddressInterpolationTests: XCTestCase {
     func testExample() {
-
+        let interpolator = try? Interpolator(dataDirectory: URL(fileURLWithPath: "/"))
     }
     static let allTests = [
        ("testExample", testExample),
