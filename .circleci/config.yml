@@ -10,7 +10,7 @@ jobs:
       - run: docker run igormaka/swift-libpostal bash -c 'apt-get install libsqlite3-dev'
 
       # build
-      - run: docker run -v $(pwd):/code igormaka/swift-libpostal bash -c 'cd /code && swift build'
+      - run: docker run -v $(pwd):/code igormaka/swift-libpostal bash -c 'apt-get install libsqlite3-dev; cd /code && swift build'
 
       # unit tests
       - run: docker run -v $(pwd):/code igormaka/swift-libpostal bash -c 'cd /code && swift test'
