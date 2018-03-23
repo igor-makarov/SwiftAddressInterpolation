@@ -15,8 +15,17 @@ func XCTAssert<T, SeqT>(sequence: SeqT, doesNotContain element: T, file: StaticS
 }
 
 class AddressInterpolationTests: XCTestCase {
-    func testExample() {
-        let interpolator = try? Interpolator(dataDirectory: URL(fileURLWithPath: "/"))
+    var dataDir: String! = ProcessInfo.processInfo.environment["INTERPOLATION_DATA_DIR"]
+    
+    override func setUp() {
+        super.setUp()
+        XCTAssertNotNil(dataDir)
+    }
+    
+    func testExample() throws {
+        let interpolator = try Interpolator(dataDirectory: URL(fileURLWithPath: dataDir))
+        let result = try interpolator.interpolate(street: "NE Killingsworth St", houseNumber: "5309", coordinate: LatLon(lat: 45.562752, lon: -122.608138))
+        XCTAssertNotNil(result)
     }
     static let allTests = [
        ("testExample", testExample),
