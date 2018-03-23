@@ -8,7 +8,7 @@ jobs:
       - run: docker pull igormaka/swift-libpostal
 
       # build
-      - run: docker run -v $(pwd):/code igormaka/swift-libpostal bash -c 'apt-get install libsqlite3-dev && cd /code && swift package resolve && rm -f .build/checkouts/GRDB.swift.git*/GRDB/Core/Support/CoreGraphics/CGFloat.swift && swift build'
+      - run: docker run -v $(pwd):/code igormaka/swift-libpostal bash -c 'apt-get install libsqlite3-dev && cd /code && swift package resolve && swift build'
 
       # unit tests
       - run: docker run -v $(pwd):/code igormaka/swift-libpostal bash -c 'cd /code && swift test'
