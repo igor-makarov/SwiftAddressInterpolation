@@ -7,7 +7,7 @@
 
 import Foundation
 import SwiftPostal
-import GRDB
+import SQLite
 
 public enum InterpolationError: Error {
     public typealias RawValue = Int
@@ -36,18 +36,14 @@ public class Interpolator {
     }
     
     
-    let database: DatabaseQueue
+    let database: Connection
     
     public init(dataDirectory: URL) throws {
-        var configuration = Configuration()
-        configuration.readonly = true
-        database = try DatabaseQueue(path: dataDirectory.appendingPathComponent("address.db").path,
-                                      configuration: configuration)
-        let streetDb = try DatabaseQueue(path: dataDirectory.appendingPathComponent("street.db").path,
-                                     configuration: configuration)
-        try database.inDatabase {
-            try $0.execute("ATTACH DATABASE ? AS street", arguments: [streetDb.path])
-        }
+        let addressDbPath = dataDirectory.appendingPathComponent("address.db").path
+        database = try Connection(addressDbPath, readonly: true)
+        let streetDbPath = dataDirectory.appendingPathComponent("street.db").path
+        _ = try Connection(streetDbPath, readonly: true) // check exist
+        try database.prepare("ATTACH DATABASE ? AS street").run([streetDbPath])
     }
     
     public func interpolate(street: String, houseNumber houseNumberString: String, coordinate: LatLon) throws -> Result? {

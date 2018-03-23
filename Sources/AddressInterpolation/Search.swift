@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import GRDB
+import SQLite
 
 // maximum names to match on
 var MAX_NAMES = 10;
@@ -52,7 +52,7 @@ let SQL = [
 
 let NAME_SQL = "(street.names.name=?)"
 
-struct Place : RowConvertible  {
+struct Place {
     let rowid: Int64
     let id: Int64
     let source: String
@@ -62,19 +62,19 @@ struct Place : RowConvertible  {
     let parity: String
     let proj: LatLon
     
-    init(row: Row) {
-        rowid = row["rowid"]!
-        id = row["id"]!
-        source = row["source"]!
-        sourceId = row["source_id"]!
-        houseNumber = row["housenumber"]!
-        coordinate = LatLon(lat: row["lat"]!, lon: row["lon"]!)
-        parity = row["parity"]
-        proj = LatLon(lat: row["proj_lat"]!, lon: row["proj_lon"]!)
+    init(columnNames: [String:Int], row: [Binding?]) {
+        rowid = row[columnNames["rowid"]!]! as! Int64
+        id = row[columnNames["id"]!]! as! Int64
+        source = row[columnNames["source"]!]! as! String
+        sourceId = row[columnNames["source_id"]!]! as! String
+        houseNumber = row[columnNames["housenumber"]!]! as! Double
+        coordinate = LatLon(lat: row[columnNames["lat"]!]! as! Double, lon: row[columnNames["lon"]!]! as! Double)
+        parity = row[columnNames["parity"]!] as! String
+        proj = LatLon(lat: row[columnNames["proj_lat"]!]! as! Double, lon: row[columnNames["proj_lon"]!]! as! Double)
     }
 }
 
-extension DatabaseQueue {
+extension Connection {
     func search(names: [String], houseNumber: Double, coordinate: LatLon) throws -> [Place] {
         if names.isEmpty { return [] }
 
@@ -94,9 +94,13 @@ extension DatabaseQueue {
             .replacingOccurrences(of: "%%NAME_CONDITIONS%%", with: nameConditions.joined(separator: " OR "))
             .replacingOccurrences(of: "%%MAX_MATCHES%%", with: "\(MAX_MATCHES)")
             .replacingOccurrences(of: "%%TARGET_HOUSENUMBER%%", with: "\(houseNumber)")
-        let params: [DatabaseValueConvertible] = [coordinate.lon, coordinate.lat] + names
-        return try self.inDatabase { db in
-            return try Place.fetchAll(db, sql, arguments: StatementArguments(params))
+        let params: [Binding] = [coordinate.lon, coordinate.lat] + names
+        let query = try self.prepare(sql, params)
+        let columnMap = Dictionary.init(uniqueKeysWithValues: query.columnNames.enumerated().map { ($1, $0) })
+        
+        let result = query.map { bindings -> Place in
+            return Place.init(columnNames: columnMap, row: bindings)
         }
+        return result
     }
 }

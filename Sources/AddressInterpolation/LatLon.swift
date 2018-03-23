@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct LatLon {
+public struct LatLon : Codable {
     public let lat: Double
     public let lon: Double
     

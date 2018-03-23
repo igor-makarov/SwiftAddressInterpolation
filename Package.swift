@@ -15,13 +15,14 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/igor-makarov/SwiftPostal.git", .branch("master")),
         .package(url: "https://github.com/kylef/Commander.git", from: "0.8.0"),
-        .package(url: "https://github.com/groue/GRDB.swift.git", from: "2.9.0"),
+//        .package(url: "https://github.com/groue/GRDB.swift.git", from: "2.9.0"),
+        .package(url: "https://github.com/stephencelis/SQLite.swift.git", from: "0.11.4")
         ],
     targets: [
         .target(name: "AddressInterpolation",
                 dependencies: [
                     "SwiftPostal",
-                    "GRDB",
+                    "SQLite",
                     ]),
         .target(name: "AddressInterpolation.CLI",
                 dependencies: [
