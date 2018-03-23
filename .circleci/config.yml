@@ -14,4 +14,4 @@ jobs:
       - run: docker run -v $(pwd):/code project bash -c 'cd /code && swift test'
 
       # test CLI
-      - run: docker run -v $(pwd):/code project bash -c 'cd /code && .build/debug/Interpolate 20 "s rural" 0.0001 0.0001'
+      - run: docker run -v $(pwd):/code project bash -c 'cd /code && export INTERPOLATION_DATA_DIR=/code/Tests/AddressInterpolation.Tests/basic && .build/debug/Interpolate " -41.288788,174.766843" 18 "glasgow street"'

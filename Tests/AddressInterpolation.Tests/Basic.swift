@@ -57,5 +57,6 @@ class BasicTests: XCTestCase {
 
     static let allTests = [
        ("testExact", testExact),
+       ("testInterpolated", testInterpolated),
     ]
 }
