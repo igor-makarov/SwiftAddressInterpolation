@@ -24,6 +24,7 @@ class BasicTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
+        continueAfterFailure = false
     }
     
     func testExact() throws {
