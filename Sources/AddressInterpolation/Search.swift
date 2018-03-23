@@ -53,23 +53,24 @@ let SQL = [
 let NAME_SQL = "(street.names.name=?)"
 
 struct Place {
-    let rowid: Int64
     let id: Int64
     let source: String
     let sourceId: String
     let houseNumber: Double
-    let coordinate: LatLon
-    let parity: String
+    let coordinate: LatLon?
     let proj: LatLon
     
     init(columnNames: [String:Int], row: [Binding?]) {
-        rowid = row[columnNames["rowid"]!]! as! Int64
         id = row[columnNames["id"]!]! as! Int64
         source = row[columnNames["source"]!]! as! String
-        sourceId = row[columnNames["source_id"]!]! as! String
+        sourceId = row[columnNames["source_id"]!] as? String ?? ""
         houseNumber = row[columnNames["housenumber"]!]! as! Double
-        coordinate = LatLon(lat: row[columnNames["lat"]!]! as! Double, lon: row[columnNames["lon"]!]! as! Double)
-        parity = row[columnNames["parity"]!] as! String
+        if let lat = row[columnNames["lat"]!] as? Double,
+            let lon = row[columnNames["lon"]!] as? Double {
+            coordinate = LatLon(lat: lat, lon: lon)
+        } else {
+            coordinate = nil
+        }
         proj = LatLon(lat: row[columnNames["proj_lat"]!]! as! Double, lon: row[columnNames["proj_lon"]!]! as! Double)
     }
 }

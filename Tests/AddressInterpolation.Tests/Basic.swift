@@ -14,7 +14,7 @@ func XCTAssert<T, SeqT>(sequence: SeqT, doesNotContain element: T, file: StaticS
     }
 }
 
-class AddressInterpolationTests: XCTestCase {
+class BasicTests: XCTestCase {
     var dataDir: String! = ProcessInfo.processInfo.environment["INTERPOLATION_DATA_DIR"]
     
     override func setUp() {
@@ -22,12 +22,22 @@ class AddressInterpolationTests: XCTestCase {
         XCTAssertNotNil(dataDir, "INTERPOLATION_DATA_DIR not set!")
     }
     
-    func testExample() throws {
-        let interpolator = try Interpolator(dataDirectory: URL(fileURLWithPath: dataDir))
-        let result = try interpolator.interpolate(street: "NE Killingsworth St", houseNumber: "5309", coordinate: LatLon(lat: 45.562752, lon: -122.608138))
+    func testExact() throws {
+        let url = URL(fileURLWithPath: dataDir).appendingPathComponent("basic")
+        let interpolator = try Interpolator(dataDirectory: url)
+        let result = try interpolator.interpolate(street: "glasgow street",
+                                                  houseNumber: "18",
+                                                  coordinate: LatLon(lat: -41.288788, lon: 174.766843))
         XCTAssertNotNil(result)
+        XCTAssertEqual(result!,
+                       Interpolator.Result(type: .exact,
+                                           source: "OA",
+                                           id: "cfb26db2d9d2f1a8",
+                                           number: "18",
+                                           coordinate: LatLon(lat: -41.2887878, lon: 174.7668435)))
     }
+    
     static let allTests = [
-       ("testExample", testExample),
+       ("testExact", testExact),
     ]
 }

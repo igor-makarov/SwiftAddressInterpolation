@@ -15,7 +15,7 @@ public enum InterpolationError: Error {
 }
 
 public class Interpolator {
-    public struct Result {
+    public struct Result : Equatable {
         public enum ResultType: CustomStringConvertible {
             case exact
             case close
@@ -61,7 +61,7 @@ public class Interpolator {
                           source: match.source,
                           id: match.sourceId,
                           number: "\(Int(match.houseNumber))",
-                coordinate: match.coordinate)
+                coordinate: match.coordinate!)
         }
         
         if let match = res.first(where: { row in
@@ -72,7 +72,7 @@ public class Interpolator {
                           source: match.source,
                           id: match.sourceId,
                           number: "\(Int(match.houseNumber))",
-                coordinate: match.coordinate)
+                coordinate: match.coordinate!)
         }
         
         return res.interpolate(houseNumber: houseNumber)
