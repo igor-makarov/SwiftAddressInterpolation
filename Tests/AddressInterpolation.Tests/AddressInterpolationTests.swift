@@ -19,7 +19,7 @@ class AddressInterpolationTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        XCTAssertNotNil(dataDir)
+        XCTAssertNotNil(dataDir, "INTERPOLATION_DATA_DIR not set!")
     }
     
     func testExample() throws {
