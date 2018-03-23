@@ -9,7 +9,7 @@ import Foundation
 
 let LESS_THAN_ONE_METER = 0.0000001
 
-public struct LatLon : Equatable {
+public struct LatLon {
     public let lat: Double
     public let lon: Double
     
@@ -23,12 +23,6 @@ public struct LatLon : Equatable {
     public var description: String {
         return String(format: "%.6f,%.6f", lat, lon)
     }
-    
-    public static func == (lhs: LatLon, rhs: LatLon) -> Bool {
-        return abs(lhs.lat - rhs.lat) < LESS_THAN_ONE_METER &&
-               abs(lhs.lon - rhs.lon) < LESS_THAN_ONE_METER
-    }
-
 }
 
 

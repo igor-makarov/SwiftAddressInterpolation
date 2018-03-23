@@ -15,15 +15,7 @@ public enum InterpolationError: Error {
 }
 
 public class Interpolator {
-    public struct Result : Equatable {
-        public static func ==(lhs: Interpolator.Result, rhs: Interpolator.Result) -> Bool {
-            return lhs.type == rhs.type &&
-                lhs.source == rhs.source &&
-                lhs.id == rhs.id &&
-                lhs.number == rhs.number &&
-                lhs.coordinate == rhs.coordinate
-        }
-        
+    public struct Result {
         public enum ResultType: CustomStringConvertible {
             case exact
             case close

@@ -14,6 +14,23 @@ func XCTAssert<T, SeqT>(sequence: SeqT, doesNotContain element: T, file: StaticS
     }
 }
 
+extension Interpolator.Result : Equatable {
+    public static func ==(lhs: Interpolator.Result, rhs: Interpolator.Result) -> Bool {
+        return lhs.type == rhs.type &&
+            lhs.source == rhs.source &&
+            lhs.id == rhs.id &&
+            lhs.number == rhs.number &&
+            lhs.coordinate == rhs.coordinate
+    }
+}
+
+extension LatLon : Equatable {
+    public static func == (lhs: LatLon, rhs: LatLon) -> Bool {
+        return abs(lhs.lat - rhs.lat) < LESS_THAN_ONE_METER &&
+            abs(lhs.lon - rhs.lon) < LESS_THAN_ONE_METER
+    }
+}
+
 class BasicTests: XCTestCase {
     static let dirName = "basic"
     let dataDir: URL = {
