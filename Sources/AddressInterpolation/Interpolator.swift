@@ -48,7 +48,7 @@ public class Interpolator {
     
     public func interpolate(street: String, houseNumber houseNumberString: String, coordinate: LatLon) throws -> Result? {
         let names = Expander().expand(address: street)
-        guard let houseNumber = Double(houseNumberString) else { throw InterpolationError.houseNumberError }
+        guard let houseNumber = houseNumber(string: houseNumberString) else { throw InterpolationError.houseNumberError }
         let res = try database.search(names: names, houseNumber: houseNumber, coordinate: coordinate)
         
         if res.isEmpty { return nil }

@@ -58,6 +58,20 @@ class BasicTests: XCTestCase {
                                            coordinate: LatLon(lat: -41.2887878, lon: 174.7668435)))
     }
 
+    func testClose() throws {
+        let interpolator = try Interpolator(dataDirectory: dataDir)
+        let result = try interpolator.interpolate(street: "glasgow street",
+                                                  houseNumber: "18a",
+                                                  coordinate: LatLon(lat: -41.288788, lon: 174.766843))
+        XCTAssertNotNil(result)
+        XCTAssertEqual(result!,
+                       Interpolator.Result(type: .close,
+                                           source: "OA",
+                                           id: "cfb26db2d9d2f1a8",
+                                           number: "18",
+                                           coordinate: LatLon(lat: -41.2887878, lon: 174.7668435)))
+    }
+
     func testInterpolated() throws {
         let interpolator = try Interpolator(dataDirectory: dataDir)
         let result = try interpolator.interpolate(street: "glasgow street",
@@ -74,6 +88,7 @@ class BasicTests: XCTestCase {
 
     static let allTests = [
        ("testExact", testExact),
+       ("testClose", testClose),
        ("testInterpolated", testInterpolated),
     ]
 }
