@@ -95,7 +95,7 @@ extension Connection {
             .replacingOccurrences(of: "%%NAME_CONDITIONS%%", with: nameConditions.joined(separator: " OR "))
             .replacingOccurrences(of: "%%MAX_MATCHES%%", with: "\(MAX_MATCHES)")
             .replacingOccurrences(of: "%%TARGET_HOUSENUMBER%%", with: "\(houseNumber)")
-        let params: [Binding] = [coordinate.lon, coordinate.lat] + names
+        let params: [Binding] = [coordinate.lon, coordinate.lat] + Array(maxNames)
         let query = try self.prepare(sql, params)
         let columnMap = Dictionary.init(uniqueKeysWithValues: query.columnNames.enumerated().map { ($1, $0) })
         
