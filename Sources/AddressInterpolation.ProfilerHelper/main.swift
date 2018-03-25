@@ -10,15 +10,17 @@ import AddressInterpolation
 
 let printEveryIteration = 1
 
-let dir = "/Volumes/microSD/pelias/data/interpolation"
+
+let dir = "/Volumes/microSD/interpolation"
 let interpolator = try Interpolator(dataDirectory: URL(fileURLWithPath: dir))
 
 func test(houseNumber: Int) throws -> TimeInterval {
-    let street = "NE Killingsworth St"
-    let coordinate = LatLon(lat: 45.562752, lon: -122.608138)
+    let street = "דיזנגוף"
+    let coordinate = LatLon(lat: 32.076710, lon: 34.774534)
 
     let date1 = Date()
     let result = try interpolator.interpolate(street: street, houseNumber: "\(houseNumber)", coordinate: coordinate)
+    print("tested \(houseNumber)")
 
     let date2 = Date()
     if houseNumber % printEveryIteration == 0 || houseNumber % printEveryIteration == 1 {
@@ -29,11 +31,11 @@ func test(houseNumber: Int) throws -> TimeInterval {
     return date2.timeIntervalSince(date1)
 }
 
-func main() {
+func main() throws {
     var houseNumber = 1
     var time: TimeInterval = 0
     while true {
-        let timed = try! test(houseNumber: houseNumber)
+        let timed = try test(houseNumber: houseNumber)
         time += timed
         let average = time / Double(houseNumber)
         if houseNumber % printEveryIteration == 0 || houseNumber % printEveryIteration == 1 {
@@ -43,4 +45,6 @@ func main() {
     }
 }
 
-main()
+try? main()
+
+print("bla")
