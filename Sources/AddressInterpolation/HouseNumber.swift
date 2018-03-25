@@ -18,19 +18,34 @@ let MAX_RANGE = 6 // the maximum amount β is higher than α
 let MIN_RANGE_HOUSENUMBER = 10 // the minimum acceptible value for both α and β
 
 private extension String {
-    func replace(_ pattern: String, with string: String, caseInsensitive: Bool = false) -> String {
+    static let _regexLock = DispatchSemaphore(value: 1)
+    static var _regexCache = [String: Regex]()
+    
+    static func regex(pattern: String, caseInsensitive: Bool = false) -> Regex {
+        _regexLock.wait()
+        defer { _regexLock.signal() }
+        
+        if let regex = _regexCache[pattern] {
+            return regex
+        }
         let regex = try! Regex(pattern: pattern,
                                options: caseInsensitive ? [.caseInsensitive] : [])
+        String._regexCache[pattern] = regex
+        return regex
+    }
+    
+    func replace(_ pattern: String, with string: String, caseInsensitive: Bool = false) -> String {
+        let regex = String.regex(pattern: pattern, caseInsensitive: caseInsensitive)
         return regex.replaceAll(in: self, with: string)
     }
     
     func match(_ pattern: String) -> Bool {
-        let regex = try! Regex(pattern: pattern)
+        let regex = String.regex(pattern: pattern)
         return regex.matches(self)
     }
 
     func match(_ pattern: String) -> [String] {
-        let regex = try! Regex(pattern: pattern)
+        let regex = String.regex(pattern: pattern)
         return regex.findFirst(in: self)?.subgroups.flatMap { $0 } ?? []
     }
 }
