@@ -36,7 +36,7 @@ private extension String {
 }
 
 private func parseFloat(_ string: String) -> Double {
-    let clean = string.components(separatedBy: CharacterSet.init(charactersIn: "0123456789.").inverted).joined(separator: "")
+    let clean = string.components(separatedBy: CharacterSet(charactersIn: "0123456789.").inverted).joined(separator: "")
     return Double(clean)!
 }
 

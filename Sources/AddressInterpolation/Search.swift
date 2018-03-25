@@ -97,10 +97,10 @@ extension Connection {
             .replacingOccurrences(of: "%%TARGET_HOUSENUMBER%%", with: "\(houseNumber)")
         let params: [Binding] = [coordinate.lon, coordinate.lat] + Array(maxNames)
         let query = try self.prepare(sql, params)
-        let columnMap = Dictionary.init(uniqueKeysWithValues: query.columnNames.enumerated().map { ($1, $0) })
+        let columnMap = Dictionary(uniqueKeysWithValues: query.columnNames.enumerated().map { ($1, $0) })
         
         let result = query.map { bindings -> Place in
-            return Place.init(columnNames: columnMap, row: bindings)
+            return Place(columnNames: columnMap, row: bindings)
         }
         return result
     }

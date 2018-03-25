@@ -8,13 +8,14 @@
 import Foundation
 import SwiftPostal
 import SQLite
+import Dispatch
 
 public enum InterpolationError: Error {
     public typealias RawValue = Int
     case houseNumberError
 }
 
-public class Interpolator {
+public struct Interpolator {
     public struct Result {
         public enum ResultType: CustomStringConvertible {
             case exact
@@ -36,20 +37,23 @@ public class Interpolator {
     }
     
     
-    let database: Connection
+    private let _database: Connection
+    private static let _postalLock = DispatchSemaphore(value: 1)
     
     public init(dataDirectory: URL) throws {
         let addressDbPath = dataDirectory.appendingPathComponent("address.db").path
-        database = try Connection(addressDbPath, readonly: true)
+        _database = try Connection(addressDbPath, readonly: true)
         let streetDbPath = dataDirectory.appendingPathComponent("street.db").path
         _ = try Connection(streetDbPath, readonly: true) // check exist
-        try database.prepare("ATTACH DATABASE ? AS street").run([streetDbPath])
+        try _database.prepare("ATTACH DATABASE ? AS street").run([streetDbPath])
     }
     
     public func interpolate(street: String, houseNumber houseNumberString: String, coordinate: LatLon) throws -> Result? {
+        Interpolator._postalLock.wait()
         let names = Expander().expand(address: street)
+        Interpolator._postalLock.signal()
         guard let houseNumber = houseNumber(string: houseNumberString) else { throw InterpolationError.houseNumberError }
-        let res = try database.search(names: names, houseNumber: houseNumber, coordinate: coordinate)
+        let res = try _database.search(names: names, houseNumber: houseNumber, coordinate: coordinate)
         
         if res.isEmpty { return nil }
         
