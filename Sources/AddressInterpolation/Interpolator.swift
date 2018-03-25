@@ -39,7 +39,7 @@ public struct Interpolator {
     
     private let _database: Connection
     private static let _postalLock = DispatchSemaphore(value: 1)
-    
+
     public init(dataDirectory: URL) throws {
         let addressDbPath = dataDirectory.appendingPathComponent("address.db").path
         _database = try Connection(addressDbPath, readonly: true)
@@ -49,10 +49,14 @@ public struct Interpolator {
     }
     
     public func interpolate(street: String, houseNumber houseNumberString: String, coordinate: LatLon) throws -> Result? {
-        Interpolator._postalLock.wait()
-        let names = Expander().expand(address: street)
-        Interpolator._postalLock.signal()
-        guard let houseNumber = houseNumber(string: houseNumberString) else { throw InterpolationError.houseNumberError }
+        let names = Interpolator._postalLock.locked {
+            return Expander().expand(address: street)
+        }
+
+        guard let houseNumber = houseNumber(string: houseNumberString) else {
+            throw InterpolationError.houseNumberError
+        }
+        
         let res = try _database.search(names: names, houseNumber: houseNumber, coordinate: coordinate)
         
         if res.isEmpty { return nil }
