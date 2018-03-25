@@ -9,7 +9,7 @@ let package = Package(
             name: "Interpolate",
             targets: ["AddressInterpolation.CLI"]),
         .library(
-            name: "AddressInterpolation.Framework",
+            name: "AddressInterpolation",
             targets: ["AddressInterpolation"]),
         ],
     dependencies: [
