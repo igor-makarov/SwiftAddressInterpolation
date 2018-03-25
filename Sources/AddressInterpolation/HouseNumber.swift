@@ -7,6 +7,7 @@
 
 import Foundation
 import Regex
+import Dispatch
 
 // constants for controlling how we parse ranges, eg: 'α-β'
 // some ranges such as '1-7' are ambiguous; it could mean 'apt 7, no 1'; or
