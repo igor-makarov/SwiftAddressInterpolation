@@ -9,7 +9,7 @@ import Foundation
 
 let LESS_THAN_ONE_METER = 0.0000001
 
-public struct LatLon {
+public struct LatLon : Codable {
     public let lat: Double
     public let lon: Double
     

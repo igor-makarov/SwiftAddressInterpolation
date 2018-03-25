@@ -16,8 +16,8 @@ public enum InterpolationError: Error {
 }
 
 public struct Interpolator {
-    public struct Result {
-        public enum ResultType: CustomStringConvertible {
+    public struct Result : Codable {
+        public enum ResultType: Int, Codable, CustomStringConvertible {
             case exact
             case close
             case interpolated
